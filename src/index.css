@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: white;
+
+
+}
+
+body.dark {
+  background-color: rgb(27, 27, 27);
+  /* Dark mode background color */
+  color: white;
+  /* Dark mode text color */
+}
