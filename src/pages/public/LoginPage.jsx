@@ -1,43 +1,28 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PublicLayout from '../../components/layouts/PublicLayout';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-
-// Define validation schema
-const schema = yup.object().shape({
-  email: yup
-    .string()
-    .email('Please enter a valid email')
-    .required('Email is required'),
-  password: yup
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .required('Password is required'),
-});
+import { loginSchema } from '../../schemas/authSchemas';
+import PasswordInput from '../../components/forms/PasswordInput';
+import SocialLoginButton from '../../components/forms/SocialLoginButton';
+import { useAuthForm } from '../../hooks/useAuthForm';
+import { AUTH_ERRORS } from '../../constants/auth';
 
 const LoginPage = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm({
-    resolver: yupResolver(schema),
-  });
-
-  const onSubmit = async (data) => {
+    errors,
+    isLoading,
+  } = useAuthForm(loginSchema, async (data) => {
     console.log('Form submitted with data:', data);
-    setIsLoading(true);
 
     try {
       // Simulate API call
@@ -49,7 +34,7 @@ const LoginPage = () => {
         name: 'John Doe', // This would come from the API in a real app
       });
 
-      toast.success('Login successful!', {
+      toast.success(AUTH_ERRORS.LOGIN_SUCCESS, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -61,11 +46,10 @@ const LoginPage = () => {
         bodyClassName: 'p-3',
       });
 
-      reset();
       navigate('/dashboard');
     } catch (error) {
       console.error('Error during form submission:', error);
-      toast.error('Login failed. Please try again.', {
+      toast.error(AUTH_ERRORS.LOGIN_FAILED, {
         position: "top-right",
         autoClose: 3000,
         hideProgressBar: false,
@@ -76,14 +60,14 @@ const LoginPage = () => {
         className: 'bg-red-500 text-white font-medium rounded-lg shadow-lg',
         bodyClassName: 'p-3',
       });
-    } finally {
-      setIsLoading(false);
     }
-  };
+  });
 
   const handleLogout = () => {
     // Implement logout functionality
   };
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -114,15 +98,9 @@ const LoginPage = () => {
       <h6 className="text-center mb-4 opacity-60 dark:text-white dark:opacity-80">Please login to your stonique account</h6>
 
       <div className="flex flex-col gap-3 w-full">
-        <button className="w-full py-2 flex items-center justify-center gap-2 text-black dark:bg-gray-300 hover:border-black border-[1px] focus:outline-none">
-          <img className="h-5 w-5 mr-1" src="imgs/google-logo.webp" alt="Google Icon" />
-          Login with Google
-        </button>
+        <SocialLoginButton icon="imgs/google-logo.webp" text="Login with Google" />
 
-        <button className="w-full py-2 flex items-center justify-center gap-2 text-black dark:bg-gray-300 hover:border-black border-[1px] focus:outline-none">
-          <img className="h-5 w-5 mr-1" src="imgs/apple-logo copy.png" alt="Apple Icon" />
-          Login with Apple ID
-        </button>
+        <SocialLoginButton icon="imgs/apple-logo copy.png" text="Login with Apple ID" />
 
         <div className="flex items-center my-2 w-full">
           <hr className="flex-grow border-t-1 border-gray-300 dark:border-white" />
@@ -130,10 +108,10 @@ const LoginPage = () => {
           <hr className="flex-grow border-t-1 border-gray-300 dark:border-white" />
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="mb-6 w-full">
+        <form onSubmit={handleSubmit} className="mb-6 w-full" noValidate>
           <div className="mb-3">
             <input
-              type="email"
+              type="text"
               id="email"
               {...register('email')}
               className="w-full px-4 py-2 border shadow-sm focus:outline-none dark:bg-gray-300 dark:text-white focus:ring-2 focus:ring-blue-400"
@@ -145,27 +123,15 @@ const LoginPage = () => {
             )}
           </div>
 
-          <div className="mb-1 relative">
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                {...register('password')}
-                className="w-full px-4 py-2 border shadow-sm dark:bg-gray-300 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-                placeholder="Password"
-                disabled={isLoading}
-              />
-              <img
-                src={showPassword ? "imgs/eye.svg" : "imgs/eye-closed.png"}
-                alt="Toggle password visibility"
-                className="absolute h-6 w-6 right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                onClick={togglePasswordVisibility}
-              />
-            </div>
-            {errors.password && (
-              <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password.message}</p>
-            )}
-          </div>
+          <PasswordInput
+            register={register}
+            errors={errors}
+            name="password"
+            placeholder="Password"
+            disabled={isLoading}
+            showPassword={showPassword}
+            togglePassword={togglePasswordVisibility}
+          />
 
           <div className="text-right mb-4">
             <a href="/forgot-password" className="text-sm dark:text-white text-stone-300 hover:underline">

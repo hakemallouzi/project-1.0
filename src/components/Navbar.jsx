@@ -8,7 +8,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
   };
 
   return (
-    <div className="flex justify-between items-center h-14 text-black bg-red-100/40 dark:bg-gray-i  dark:text-gray-300  mb-7">
+    <div className="flex justify-between items-center h-14 text-black bg-red-100/40 dark:bg-gray-800  dark:text-gray-300  mb-7">
       <ul className="flex w-full justify-between">
         <li className="p-4 ml-20">
           <Link to="/cart" className="hover:text-stone-700">
@@ -17,7 +17,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
         </li>
         <li className="p-4 flex items-center mr-20">
           <img
-            className="h-5 w-5 mr-2 bg-red-100/30 dark:bg-gray-600 cursor-pointer"
+            className="h-5 w-5 mr-2 bg-red-100/30 dark:bg-gray-800 cursor-pointer"
             src="/imgs/phone-icon.png"
             alt="Phone Icon"
             onClick={handlePhoneClick}

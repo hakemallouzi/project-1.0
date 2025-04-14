@@ -1,31 +1,13 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuth } from '../../context/AuthContext';
+import { signupSchema } from '../../schemas/authSchemas';
 import PublicLayout from '../../components/layouts/PublicLayout';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-
-// Define validation schema
-const schema = yup.object().shape({
-    firstName: yup.string().required('First name is required'),
-    lastName: yup.string().required('Last name is required'),
-    email: yup.string().email('Invalid email').required('Email is required'),
-    password: yup
-        .string()
-        .min(8, 'Password must be at least 8 characters')
-        .matches(
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-            'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character'
-        )
-        .required('Password is required'),
-    confirmPassword: yup
-        .string()
-        .oneOf([yup.ref('password'), null], 'Passwords must match')
-        .required('Confirm password is required'),
-});
+import FormInput from '../../components/forms/FormInput';
 
 const SignupPage = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +22,7 @@ const SignupPage = () => {
         formState: { errors },
         reset,
     } = useForm({
-        resolver: yupResolver(schema),
+        resolver: yupResolver(signupSchema),
     });
 
     const onSubmit = async (data) => {
@@ -118,99 +100,67 @@ const SignupPage = () => {
             <form onSubmit={handleSubmit(onSubmit)} className="max-w-md mx-auto p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
                 <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            First Name
-                        </label>
-                        <input
-                            {...register('firstName')}
+                        <FormInput
+                            label="First Name"
                             type="text"
-                            className="w-full px-4 py-2 border shadow-sm focus:outline-none dark:bg-gray-300 dark:text-white focus:ring-2 focus:ring-blue-400"
+                            register={register}
+                            errors={errors}
+                            name="firstName"
                             placeholder="First Name"
                             disabled={isLoading}
                         />
-                        {errors.firstName && (
-                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.firstName.message}</p>
-                        )}
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Last Name
-                        </label>
-                        <input
-                            {...register('lastName')}
+                        <FormInput
+                            label="Last Name"
                             type="text"
-                            className="w-full px-4 py-2 border shadow-sm focus:outline-none dark:bg-gray-300 dark:text-white focus:ring-2 focus:ring-blue-400"
+                            register={register}
+                            errors={errors}
+                            name="lastName"
                             placeholder="Last Name"
                             disabled={isLoading}
                         />
-                        {errors.lastName && (
-                            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.lastName.message}</p>
-                        )}
                     </div>
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Email
-                    </label>
-                    <input
-                        {...register('email')}
-                        type="email"
-                        className="w-full px-4 py-2 border shadow-sm focus:outline-none dark:bg-gray-300 dark:text-white focus:ring-2 focus:ring-blue-400"
+                    <FormInput
+                        label="Email"
+                        type="text"
+                        register={register}
+                        errors={errors}
+                        name="email"
                         placeholder="Email"
                         disabled={isLoading}
                     />
-                    {errors.email && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.email.message}</p>
-                    )}
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Password
-                    </label>
-                    <div className="relative">
-                        <input
-                            {...register('password')}
-                            type={showPassword ? 'text' : 'password'}
-                            className="w-full px-4 py-2 border shadow-sm dark:bg-gray-300 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="Password"
-                            disabled={isLoading}
-                        />
-                        <img
-                            src={showPassword ? "imgs/eye.svg" : "imgs/eye-closed.png"}
-                            alt="Toggle password visibility"
-                            className="absolute h-6 w-6 right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                            onClick={() => setShowPassword(!showPassword)}
-                        />
-                    </div>
-                    {errors.password && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.password.message}</p>
-                    )}
+                    <FormInput
+                        label="Password"
+                        type="password"
+                        register={register}
+                        errors={errors}
+                        name="password"
+                        placeholder="Password"
+                        disabled={isLoading}
+                        showPassword={showPassword}
+                        togglePassword={() => setShowPassword(!showPassword)}
+                    />
                 </div>
 
                 <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Confirm Password
-                    </label>
-                    <div className="relative">
-                        <input
-                            {...register('confirmPassword')}
-                            type={showConfirmPassword ? 'text' : 'password'}
-                            className="w-full px-4 py-2 border shadow-sm dark:bg-gray-300 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            placeholder="Confirm Password"
-                            disabled={isLoading}
-                        />
-                        <img
-                            src={showConfirmPassword ? "imgs/eye.svg" : "imgs/eye-closed.png"}
-                            alt="Toggle password visibility"
-                            className="absolute h-6 w-6 right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        />
-                    </div>
-                    {errors.confirmPassword && (
-                        <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.confirmPassword.message}</p>
-                    )}
+                    <FormInput
+                        label="Confirm Password"
+                        type="password"
+                        register={register}
+                        errors={errors}
+                        name="confirmPassword"
+                        placeholder="Confirm Password"
+                        disabled={isLoading}
+                        showPassword={showConfirmPassword}
+                        togglePassword={() => setShowConfirmPassword(!showConfirmPassword)}
+                    />
                 </div>
 
                 <button

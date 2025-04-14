@@ -17,9 +17,9 @@ const CartItem = ({ title, price = 2500 }) => {
       </div>
       <div>
         <div className="flex items-center">
-          <button onClick={decreaseQuantity} className="px-2 py-1 border bg-gray-100">-</button>
+          <button onClick={decreaseQuantity} className="px-2 py-1 border bg-gray-100 dark:bg-gray-800">-</button>
           <span className="px-4">{quantity}</span>
-          <button onClick={increaseQuantity} className="px-2 py-1 border bg-gray-100">+</button>
+          <button onClick={increaseQuantity} className="px-2 py-1 border bg-gray-100 dark:bg-gray-800">+</button>
 
         </div>
         <button className="text-sm text-gray-500 mt-2">🗑️ Remove</button></div>
