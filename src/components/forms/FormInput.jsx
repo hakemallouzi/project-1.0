@@ -13,6 +13,7 @@ const FormInput = ({ label, type, register, errors, name, placeholder, disabled 
         {errors[name] && (
             <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors[name].message}</p>
         )}
+
     </div>
 );
 
