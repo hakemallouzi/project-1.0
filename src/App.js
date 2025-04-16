@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import Home from './pages/public/Home';
 import LoginPage from './pages/public/LoginPage';
@@ -11,6 +12,7 @@ import Cart from './features/cart/Cart';
 import Footer from './components/Footer';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import ScrollToTop from './components/ScrollToTop';
+import Shop from './components/Shop';
 
 // Create a client
 const queryClient = new QueryClient();
@@ -49,44 +51,47 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Router>
-        <ScrollToTop />
-        <div className="flex flex-col min-h-screen">
-          <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
-          <main className="flex-grow">
-            <Routes>
-              <Route path="/" element={<Navigate to="/login" replace />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/signup" element={<SignupPage />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <DashboardPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <ProfilePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/cart"
-                element={
-                  <ProtectedRoute>
-                    <Cart />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
+      <CartProvider>
+        <Router>
+          <ScrollToTop />
+          <div className="flex flex-col min-h-screen">
+            <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
+            <main className="flex-grow">
+              <Routes>
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/cart"
+                  element={
+                    <ProtectedRoute>
+                      <Cart />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </CartProvider>
     </QueryClientProvider>
   );
 }

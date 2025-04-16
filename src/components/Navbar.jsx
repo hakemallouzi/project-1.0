@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import CartIcon from './CartIcon';
 
 const Navbar = ({ toggleTheme, isDarkMode }) => {
   // Function to show an alert
@@ -11,8 +12,11 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
     <div className="flex justify-between items-center h-14 text-black bg-red-100/40 dark:bg-gray-800  dark:text-gray-300  mb-7">
       <ul className="flex w-full justify-between">
         <li className="p-4 ml-20">
-          <Link to="/cart" className="hover:text-stone-700">
-            &lt; Cart
+          <CartIcon />
+        </li>
+        <li className="p-4">
+          <Link to="/shop" className="hover:text-stone-700">
+            Shop
           </Link>
         </li>
         <li className="p-4 flex items-center mr-20">
